@@ -84,17 +84,27 @@ pub unsafe fn pci_init(env: &mut Environment) {
             for func in 0..8 {
                 let mut pci = PciConfig::new(bus as u8, slot as u8, func as u8);
                 let id = pci.read(0);
+                let vid = (id & 0xFFFF) as u16;
+                let did = ((id >> 16) & 0xFFFF) as u16;
 
-                if (id & 0xFFFF) != 0xFFFF {
+                if vid != 0xFFFF {
                     let class_id = pci.read(8);
+                    let revision_id = (class_id & 0xFF) as u8;
+                    let class_code = ((class_id >> 24) & 0xFF) as u8;
+                    let subclass_code = ((class_id >> 16) & 0xFF) as u8;
+                    let prog_if = ((class_id >> 8) & 0xFF) as u8;
 
-                    /*
-                    debug!(" * PCI {}, {}, {}: ID {:X} CL {:X}",
+
+                    debug!(" * PCI {}:{}:{} VID {:X} DID {:X} RID {:X} BCC {:X} SCC {:X} PI {:X}",
                            bus,
                            slot,
                            func,
-                           id,
-                           class_id);
+                           vid,
+                           did,
+                           revision_id,
+                           class_code,
+                           subclass_code,
+                           prog_if);
 
                     for i in 0..6 {
                         let bar = pci.read(i * 4 + 0x10);
@@ -116,11 +126,11 @@ pub unsafe fn pci_init(env: &mut Environment) {
 
                     pci_device(env,
                                pci,
-                               ((class_id >> 24) & 0xFF) as u8,
-                               ((class_id >> 16) & 0xFF) as u8,
-                               ((class_id >> 8) & 0xFF) as u8,
-                               (id & 0xFFFF) as u16,
-                               ((id >> 16) & 0xFFFF) as u16);
+                               class_code,
+                               subclass_code,
+                               prog_if,
+                               vid,
+                               did);
                 }
             }
         }
