@@ -1,4 +1,5 @@
 use drivers::io::{Io, Pio};
+use super::common::config::*;
 
 /// A PCI configuration
 #[derive(Copy, Clone)]
@@ -22,23 +23,21 @@ impl PciConfig {
         }
     }
 
-    fn address(&self, offset: u8) -> u32 {
-        return 1 << 31 | (self.bus as u32) << 16 | (self.slot as u32) << 11 |
-               (self.func as u32) << 8 | (offset as u32 & 0xFC);
+    unsafe fn set_address(&mut self, offset: u8) -> &mut Self {
+        let address = (self.bus as u32) << 16 | (self.slot as u32) << 11 |
+                      (self.func as u32) << 8 | (offset as u32 & 0xFC);
+        self.addr.write(PCI_CONFIG_ADDRESS_ENABLE | address);
+        self
     }
 
-    /// Read
+    /// PCI Configuration Read
     pub unsafe fn read(&mut self, offset: u8) -> u32 {
-        let address = self.address(offset);
-        self.addr.write(address);
-        return self.data.read();
+        self.set_address(offset).data.read()
     }
 
-    /// Write
+    /// PCI Configuration Write
     pub unsafe fn write(&mut self, offset: u8, value: u32) {
-        let address = self.address(offset);
-        self.addr.write(address);
-        self.data.write(value);
+        self.set_address(offset).data.write(value);
     }
 
     pub unsafe fn flag(&mut self, offset: u8, flag: u32, toggle: bool) {
