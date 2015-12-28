@@ -47,6 +47,7 @@ use common::memory;
 use common::paging::Page;
 use common::time::Duration;
 
+use devices::DeviceManager;
 use drivers::pci;
 use drivers::io::{Io, Pio};
 use drivers::ps2::*;
@@ -82,6 +83,8 @@ pub mod macros;
 pub mod alloc_system;
 /// ACPI
 pub mod acpi;
+/// Device Manager
+pub mod devices;
 /// Disk drivers
 pub mod disk;
 /// Various drivers
@@ -285,6 +288,9 @@ unsafe fn init(tss_data: usize) {
             }
 
             *(env.clock_realtime.lock()) = Rtc::new().time();
+
+            // Initiate Device Manager
+            env.schemes.push(UnsafeCell::new(DeviceManager::new()));
 
             env.schemes.push(UnsafeCell::new(Ps2::new()));
             env.schemes.push(UnsafeCell::new(Serial::new(0x3F8, 0x4)));
