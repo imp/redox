@@ -4,6 +4,7 @@ use common::debug;
 
 use disk::ahci::Ahci;
 use disk::ide::Ide;
+use drivers::nvme::Nvme;
 
 use env::Environment;
 

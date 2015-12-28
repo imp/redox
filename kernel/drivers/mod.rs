@@ -1,5 +1,7 @@
 extern crate io;
 
+/// NVMe
+pub mod nvme;
 /// PCI
 pub mod pci;
 /// PS2
