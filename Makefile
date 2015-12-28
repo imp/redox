@@ -361,6 +361,10 @@ else
 	QFLAGS += -drive file=$(BUILD)/harddrive.bin,format=raw,index=0,media=disk
 endif
 
+ifeq ($(nvme),yes)
+	QFLAGS += -drive id=disk,file=$(BUILD)/harddrive.bin,format=raw,if=none -device nvme,id=nvme0,serial=ZD20151227,drive=disk
+endif
+
 ifeq ($(net),no)
 	QFLAGS += -net none
 else ifeq ($(net),tap)
