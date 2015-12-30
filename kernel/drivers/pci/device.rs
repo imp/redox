@@ -1,3 +1,4 @@
+use common::debug;
 use drivers::pio::*;
 use super::common::config::*;
 
@@ -23,7 +24,7 @@ pub struct Function {
 
 impl Function {
     pub fn new(bus: u8, slot: u8, func: u8) -> Self {
-        let mut function = Function {
+        let mut dev = Function {
             bus: bus,
             slot: slot,
             func: func,
@@ -37,8 +38,8 @@ impl Function {
             subvendor: 0xFFFF,
             subsystem: 0xFFFF,
         };
-        unsafe { function.parse_config() }
-        function
+        unsafe { dev.parse_config() }
+        return dev;
     }
 
     unsafe fn set_config_address(&self, offset: u8) {
@@ -117,6 +118,21 @@ impl Function {
     }
 
     pub fn report(&self) {
-        debug!("PCI [{:X}:{:X}:{:X}]", self.bus, self.slot, self.func)
+        debugln!("Found PCI [{:X}:{:X}:{:X}]", self.bus, self.slot, self.func);
     }
+}
+
+pub fn pci_enumerate_bus() {
+    debugln!("PCI bus enumeration started");
+    for bus in 0..256 {
+        debugln!("Scanning PCI bus {:X}", bus);
+        for slot in 0..32 {
+            //debugln!("Scanning PCI bus {:X}:{:X}", bus, slot);
+            for func in 0..8 {
+                //debugln!("Probing PCI device [{:X}:{:X}:{:X}]", bus, slot, func);
+                Function::new(bus, slot, func).report();
+            }
+        }
+    }
+    debugln!("PCI bus enumeration finished");
 }

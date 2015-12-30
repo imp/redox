@@ -289,6 +289,7 @@ unsafe fn init(tss_data: usize) {
             env.schemes.push(UnsafeCell::new(Ps2::new()));
             env.schemes.push(UnsafeCell::new(Serial::new(0x3F8, 0x4)));
 
+            pci::device::pci_enumerate_bus();
             pci::pci_init(env);
 
             env.schemes.push(UnsafeCell::new(DebugScheme::new()));
