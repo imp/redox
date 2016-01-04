@@ -21,6 +21,26 @@ use super::common::programming_interface::*;
 use super::common::vendorid::*;
 use super::common::deviceid::*;
 
+enum PciBinding {
+    VDR {
+        vid: u16,
+        did: u16,
+        rev: u8,
+    },
+    VD {
+        vid: u16,
+        did: u16,
+    },
+    CSCPI {
+        class: u8,
+        subclass: u8,
+        pi: u8,
+    },
+    CLASS {
+        c: u8,
+    },
+}
+
 /// PCI device
 pub unsafe fn pci_device(env: &mut Environment,
                          mut pci: PciConfig,
