@@ -139,26 +139,31 @@ impl Function {
         self.config_get16(PCI_CFG_STATUS)
     }
 
+    /// Set specified bits in the PCI COMMAND register
     pub fn set_command(&self, value: u16) {
         let mut cmd = self.config_get16(PCI_CFG_COMMAND);
         cmd |= value;
         self.config_put16(PCI_CFG_COMMAND, cmd);
     }
 
+    /// Clear specified bits in the PCI COMMAND register
     pub fn clear_command(&self, value: u16) {
         let mut cmd = self.config_get16(PCI_CFG_COMMAND);
         cmd &= !value;
         self.config_put16(PCI_CFG_COMMAND, cmd);
     }
 
+    /// Enable INTx for this device
     pub fn enable_intx(&self) {
         self.clear_command(INTX_DISABLE);
     }
 
+    /// Disable INTx for this device
     pub fn disable_intx(&self) {
         self.set_command(INTX_DISABLE);
     }
 
+    /// Report this device to the console
     pub fn report(&self) {
         debug!("PCI [{:X}:{:X}:{:X}] {:X}:{:X}:{:X}",
                self.bus,
