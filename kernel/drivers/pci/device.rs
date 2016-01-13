@@ -120,6 +120,14 @@ impl Function {
         self.progif
     }
 
+    pub fn get_status(&self) -> u16 {
+        self.config_get16(PCI_CFG_STATUS)
+    }
+
+    pub fn set_command(&self, value: u16) {
+        self.config_put16(PCI_CFG_COMMAND, value);
+    }
+
     pub fn report(&self) {
         debug!("PCI [{:X}:{:X}:{:X}] {:X}:{:X}:{:X}",
             self.bus, self.slot, self.func,
