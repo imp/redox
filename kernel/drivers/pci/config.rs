@@ -1,4 +1,5 @@
 use drivers::io::{Io, Pio};
+use super::common::config::*;
 
 /// A PCI configuration
 #[derive(Copy, Clone)]
@@ -17,24 +18,25 @@ impl PciConfig {
             bus: bus,
             slot: slot,
             func: func,
-            addr: Pio::<u32>::new(0xCF8),
-            data: Pio::<u32>::new(0xCFC),
+            addr: Pio::<u32>::new(PCI_CONFIG_ADDRESS),
+            data: Pio::<u32>::new(PCI_CONFIG_DATA),
         }
     }
+
 
     fn address(&self, offset: u8) -> u32 {
         return 1 << 31 | (self.bus as u32) << 16 | (self.slot as u32) << 11 |
                (self.func as u32) << 8 | (offset as u32 & 0xFC);
     }
 
-    /// Read
+    /// PCI Configuration Read
     pub unsafe fn read(&mut self, offset: u8) -> u32 {
         let address = self.address(offset);
         self.addr.write(address);
         return self.data.read();
     }
 
-    /// Write
+    /// PCI Configuration Write
     pub unsafe fn write(&mut self, offset: u8, value: u32) {
         let address = self.address(offset);
         self.addr.write(address);
