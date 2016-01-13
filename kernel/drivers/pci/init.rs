@@ -15,6 +15,7 @@ use usb::uhci::Uhci;
 use usb::xhci::Xhci;
 
 use super::config::PciConfig;
+use super::device::Device;
 use super::common::class::*;
 use super::common::subclass::*;
 use super::common::programming_interface::*;
@@ -88,6 +89,7 @@ pub unsafe fn pci_init(env: &mut Environment) {
                 let did = ((id >> 16) & 0xFFFF) as u16;
 
                 if vid != ILLEGAL {
+                    Device(bus as u8, slot as u8, func as u8).report();
                     let class_id = pci.read(8);
                     let revision_id = (class_id & 0xFF) as u8;
                     let class_code = ((class_id >> 24) & 0xFF) as u8;
