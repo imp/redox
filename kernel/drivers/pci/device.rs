@@ -130,8 +130,12 @@ impl Function {
 
     pub fn report(&self) {
         debug!("PCI [{:X}:{:X}:{:X}] {:X}:{:X}:{:X}",
-            self.bus, self.slot, self.func,
-            self.vendor, self.device, self.revision);
+               self.bus,
+               self.slot,
+               self.func,
+               self.vendor,
+               self.device,
+               self.revision);
         debug::dl();
     }
 }
