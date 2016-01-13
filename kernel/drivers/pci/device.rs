@@ -1,4 +1,5 @@
 use drivers::pio::*;
+use common::debug;
 use super::common::config::*;
 
 /// Generic PCI device
@@ -123,6 +124,7 @@ impl Function {
         debug!("PCI [{:X}:{:X}:{:X}] {:X}:{:X}:{:X}",
             self.bus, self.slot, self.func,
             self.vendor, self.device, self.revision);
+        debug::dl();
     }
 }
 
