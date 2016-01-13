@@ -34,7 +34,7 @@ pub mod config {
     pub const PCI_CFG_SUBSYSTEM_ID: u8 = 0x2E;
     pub const PCI_CFG_CAPABILITIES_PTR: u8 = 0x34;
     pub const PCI_CFG_INTERRUPT_LINE: u8 = 0x3C;
-    pub const CI_CFG_INTERRUPT_PIN: u8 = 0x3D;
+    pub const PCI_CFG_INTERRUPT_PIN: u8 = 0x3D;
 }
 
 pub mod class {
