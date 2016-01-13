@@ -43,43 +43,57 @@ impl Function {
         dev
     }
 
-    unsafe fn set_config_address(&self, offset: u8) {
+    fn set_config_address(&self, offset: u8) {
         let address = PCI_CONFIG_ADDRESS_ENABLE |
                       (self.bus as u32) << PCI_BUS_OFFSET |
                       (self.slot as u32) << PCI_SLOT_OFFSET |
                       (self.func as u32) << PCI_FUNC_OFFSET |
                       (offset as u32 & 0xFC);
-        Pio32::new(PCI_CONFIG_ADDRESS).write(address);
+        unsafe {
+            Pio32::new(PCI_CONFIG_ADDRESS).write(address);
+        }
     }
 
-    unsafe fn config_get8(&self, offset: u8) -> u8 {
+    /// Read 8 bit value from the given offset of PCI Configuration Space
+    fn config_get8(&self, offset: u8) -> u8 {
         self.set_config_address(offset);
-        Pio8::new(PCI_CONFIG_DATA + (offset & 0x03) as u16).read()
+        unsafe { Pio8::new(PCI_CONFIG_DATA + (offset & 0x03) as u16).read() }
     }
 
-    unsafe fn config_get16(&self, offset: u8) -> u16 {
+    /// Read 16 bit value from the given offset of PCI Configuration Space
+    fn config_get16(&self, offset: u8) -> u16 {
         self.set_config_address(offset);
-        Pio16::new(PCI_CONFIG_DATA + (offset & 0x02) as u16).read()
+        unsafe { Pio16::new(PCI_CONFIG_DATA + (offset & 0x02) as u16).read() }
     }
 
-    unsafe fn config_get32(&self, offset: u8) -> u32 {
+    /// Read 32 bit value from the given offset of PCI Configuration Space
+    fn config_get32(&self, offset: u8) -> u32 {
         self.set_config_address(offset);
-        Pio32::new(PCI_CONFIG_DATA).read()
+        unsafe { Pio32::new(PCI_CONFIG_DATA).read() }
     }
 
-    unsafe fn config_put8(&self, offset: u8, value: u8) {
+    /// Write 8 bit value at the given offset of PCI Configuration Space
+    fn config_put8(&self, offset: u8, value: u8) {
         self.set_config_address(offset);
-        Pio8::new(PCI_CONFIG_DATA + offset as u16 & 0x03).write(value);
+        unsafe {
+            Pio8::new(PCI_CONFIG_DATA + offset as u16 & 0x03).write(value);
+        }
     }
 
-    unsafe fn config_put16(&self, offset: u8, value: u16) {
+    /// Write 16 bit value at the given offset of PCI Configuration Space
+    fn config_put16(&self, offset: u8, value: u16) {
         self.set_config_address(offset);
-        Pio16::new(PCI_CONFIG_DATA + offset as u16 & 0x02).write(value);
+        unsafe {
+            Pio16::new(PCI_CONFIG_DATA + offset as u16 & 0x02).write(value);
+        }
     }
 
-    unsafe fn config_put32(&self, offset: u8, value: u32) {
+    /// Write 32 bit value at the given offset of PCI Configuration Space
+    fn config_put32(&self, offset: u8, value: u32) {
         self.set_config_address(offset);
-        Pio32::new(PCI_CONFIG_DATA).write(value);
+        unsafe {
+            Pio32::new(PCI_CONFIG_DATA).write(value);
+        }
     }
 
     fn parse_config(&mut self) {
