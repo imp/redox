@@ -53,12 +53,12 @@ impl Function {
 
     unsafe fn config_get8(&self, offset: u8) -> u8 {
         self.set_config_address(offset);
-        Pio8::new(PCI_CONFIG_DATA + offset as u16 & 0x03).read()
+        Pio8::new(PCI_CONFIG_DATA + (offset & 0x03) as u16).read()
     }
 
     unsafe fn config_get16(&self, offset: u8) -> u16 {
         self.set_config_address(offset);
-        Pio16::new(PCI_CONFIG_DATA + offset as u16 & 0x02).read()
+        Pio16::new(PCI_CONFIG_DATA + (offset & 0x02) as u16).read()
     }
 
     unsafe fn config_get32(&self, offset: u8) -> u32 {
