@@ -125,3 +125,7 @@ impl Function {
             self.vendor, self.device, self.revision);
     }
 }
+
+pub fn Device(bus: u8, slot: u8, func: u8) -> Function {
+    Function::new(bus as u8, slot as u8, func as u8)
+}
