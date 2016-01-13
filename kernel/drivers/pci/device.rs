@@ -97,16 +97,14 @@ impl Function {
     }
 
     fn parse_config(&mut self) {
-        unsafe {
-            self.vendor = self.config_get16(PCI_CFG_VENDOR_ID);
-            self.device = self.config_get16(PCI_CFG_DEVICE_ID);
-            self.revision = self.config_get8(PCI_CFG_REVISION_ID);
-            self.progif = self.config_get8(PCI_CFG_PROG_INTERFACE);
-            self.subclass = self.config_get8(PCI_CFG_SUBCLASS);
-            self.class = self.config_get8(PCI_CFG_BASECLASS);
-            self.subvendor = self.config_get16(PCI_CFG_SUBSYSTEM_VENDOR_ID);
-            self.subsystem = self.config_get16(PCI_CFG_SUBSYSTEM_ID);
-        }
+        self.vendor = self.config_get16(PCI_CFG_VENDOR_ID);
+        self.device = self.config_get16(PCI_CFG_DEVICE_ID);
+        self.revision = self.config_get8(PCI_CFG_REVISION_ID);
+        self.progif = self.config_get8(PCI_CFG_PROG_INTERFACE);
+        self.subclass = self.config_get8(PCI_CFG_SUBCLASS);
+        self.class = self.config_get8(PCI_CFG_BASECLASS);
+        self.subvendor = self.config_get16(PCI_CFG_SUBSYSTEM_VENDOR_ID);
+        self.subsystem = self.config_get16(PCI_CFG_SUBSYSTEM_ID);
     }
 
     pub fn get_vendor(&self) -> u16 {
