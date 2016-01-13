@@ -116,3 +116,10 @@ pub mod deviceid {
     pub const AC97_ICH4: u16 = 0x24C5;      // 82801DB/DBL/DBM (ICH4/ICH4-L/ICH4-M) AC'97 Audio
     pub const INTELHDA_ICH6: u16 = 0x2668;  // 82801FB/FBM/FR/FW/FRW High Definition Audio
 }
+
+pub mod command {
+    pub const IO_SPACE_ENABLE: u16 = 0b1 << 0;
+    pub const MEMORY_SPACE_ENABLE: u16 = 0b1 << 1;
+    pub const BUS_MASTER: u16 = 0b1 << 2;
+    pub const INTX_DISABLE: u16 = 0b1 << 10;
+}

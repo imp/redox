@@ -137,7 +137,9 @@ impl Function {
     }
 
     pub fn set_command(&self, value: u16) {
-        self.config_put16(PCI_CFG_COMMAND, value);
+        let mut cmd = self.config_get16(PCI_CFG_COMMAND);
+        cmd |= value;
+        self.config_put16(PCI_CFG_COMMAND, cmd);
     }
 
     pub fn report(&self) {
