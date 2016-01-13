@@ -1,6 +1,7 @@
 use drivers::pio::*;
 use common::debug;
 use super::common::config::*;
+use super::common::command::*;
 
 /// Generic PCI device
 pub struct Bar {
@@ -105,6 +106,8 @@ impl Function {
         self.class = self.config_get8(PCI_CFG_BASECLASS);
         self.subvendor = self.config_get16(PCI_CFG_SUBSYSTEM_VENDOR_ID);
         self.subsystem = self.config_get16(PCI_CFG_SUBSYSTEM_ID);
+
+        self.set_command(IO_SPACE_ENABLE | MEMORY_SPACE_ENABLE);
     }
 
     pub fn get_vendor(&self) -> u16 {
@@ -140,6 +143,20 @@ impl Function {
         let mut cmd = self.config_get16(PCI_CFG_COMMAND);
         cmd |= value;
         self.config_put16(PCI_CFG_COMMAND, cmd);
+    }
+
+    pub fn clear_command(&self, value: u16) {
+        let mut cmd = self.config_get16(PCI_CFG_COMMAND);
+        cmd &= !value;
+        self.config_put16(PCI_CFG_COMMAND, cmd);
+    }
+
+    pub fn enable_intx(&self) {
+        self.clear_command(INTX_DISABLE);
+    }
+
+    pub fn disable_intx(&self) {
+        self.set_command(INTX_DISABLE);
     }
 
     pub fn report(&self) {
