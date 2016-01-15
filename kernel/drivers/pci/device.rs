@@ -20,14 +20,14 @@ enum Base {
 
 pub struct Bar {
     access: BarAccess,
-    addr32: u32,
+    base32: u32,
     length: u32,
 }
 
 impl Bar {
     pub fn get8(&self, offset: u32) -> u8 {
         assert!(offset < self.length);
-        let addr = self.addr32 + offset;
+        let addr = self.base32 + offset;
         unsafe {
             match self.access {
                 BarAccess::IO => Pio8::new(addr as u16).read(),
@@ -38,7 +38,7 @@ impl Bar {
 
     pub fn get16(&self, offset: u32) -> u16 {
         assert!(offset < self.length);
-        let addr = self.addr32 + offset;
+        let addr = self.base32 + offset;
         unsafe {
             match self.access {
                 BarAccess::IO => Pio16::new(addr as u16).read(),
@@ -49,7 +49,7 @@ impl Bar {
 
     pub fn get32(&self, offset: u32) -> u32 {
         assert!(offset < self.length);
-        let addr = self.addr32 + offset;
+        let addr = self.base32 + offset;
         unsafe {
             match self.access {
                 BarAccess::IO => Pio32::new(addr as u16).read(),
@@ -60,7 +60,7 @@ impl Bar {
 
     pub fn get64(&self, offset: u32) -> u64 {
         assert!(offset < self.length);
-        let addr = self.addr32 + offset;
+        let addr = self.base32 + offset;
         unsafe {
             match self.access {
                 BarAccess::IO => panic!("No 64 bit PIO"),
