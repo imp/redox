@@ -1,4 +1,5 @@
 use core::intrinsics::{volatile_load, volatile_store};
+use core::ops::{BitAnd, BitOr, Not};
 use common::debug;
 use drivers::pio::*;
 use drivers::mmio::*;
@@ -14,8 +15,14 @@ enum BarAccess {
 }
 
 enum Base {
-    x32BIT {base: u32, size: u32},
-    x64BIT {base: u64, size: u64},
+    x32BIT {
+        base: u32,
+        size: u32,
+    },
+    x64BIT {
+        base: u64,
+        size: u64,
+    },
 }
 
 pub struct Bar {
@@ -25,47 +32,33 @@ pub struct Bar {
 }
 
 impl Bar {
-    pub fn get8(&self, offset: u32) -> u8 {
+    pub fn get<T>(&self, offset: u32) -> T
+        where Pio<T>: ReadWrite<T>,
+              T: BitAnd<Output = T> + BitOr<Output = T> + PartialEq<T> + Not<Output = T> + Copy
+    {
         assert!(offset < self.length);
         let addr = self.base32 + offset;
         unsafe {
             match self.access {
-                BarAccess::IO => Pio::<u8>::new(addr as u16).read(),
-                BarAccess::MEMORY => (&mut *(addr as *mut Mmio<u8>)).read(),
+                BarAccess::MEMORY => (&*(addr as *mut Mmio<T>)).read(),
+                BarAccess::IO => Pio::<T>::new(addr as u16).read(),
             }
+
         }
     }
 
-    pub fn get16(&self, offset: u32) -> u16 {
+    pub fn put<T>(&self, offset: u32, value: T)
+        where Pio<T>: ReadWrite<T>,
+              T: BitAnd<Output = T> + BitOr<Output = T> + PartialEq<T> + Not<Output = T> + Copy
+    {
         assert!(offset < self.length);
         let addr = self.base32 + offset;
         unsafe {
             match self.access {
-                BarAccess::IO => Pio::<u16>::new(addr as u16).read(),
-                BarAccess::MEMORY => (&mut *(addr as *mut Mmio<u16>)).read(),
+                BarAccess::MEMORY => (&mut *(addr as *mut Mmio<T>)).write(value),
+                BarAccess::IO => Pio::<T>::new(addr as u16).write(value),
             }
-        }
-    }
 
-    pub fn get32(&self, offset: u32) -> u32 {
-        assert!(offset < self.length);
-        let addr = self.base32 + offset;
-        unsafe {
-            match self.access {
-                BarAccess::IO => Pio::<u32>::new(addr as u16).read(),
-                BarAccess::MEMORY => (&mut *(addr as *mut Mmio<u32>)).read(),
-            }
-        }
-    }
-
-    pub fn get64(&self, offset: u32) -> u64 {
-        assert!(offset < self.length);
-        let addr = self.base32 + offset;
-        unsafe {
-            match self.access {
-                BarAccess::IO => panic!("No 64 bit PIO"),
-                BarAccess::MEMORY => (&mut *(addr as *mut Mmio<u64>)).read(),
-            }
         }
     }
 }
@@ -107,8 +100,7 @@ impl Function {
     }
 
     fn set_config_address(&self, offset: u8) {
-        let address = PCI_CONFIG_ADDRESS_ENABLE |
-                      (self.bus as u32) << PCI_BUS_OFFSET |
+        let address = PCI_CONFIG_ADDRESS_ENABLE | (self.bus as u32) << PCI_BUS_OFFSET |
                       (self.slot as u32) << PCI_SLOT_OFFSET |
                       (self.func as u32) << PCI_FUNC_OFFSET |
                       (offset as u32 & 0xFC);
