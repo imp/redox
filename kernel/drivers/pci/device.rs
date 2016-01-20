@@ -1,8 +1,7 @@
 use core::intrinsics::{volatile_load, volatile_store};
 use core::ops::{BitAnd, BitOr, Not};
 use common::debug;
-use drivers::pio::*;
-use drivers::mmio::*;
+use drivers::io::*;
 use super::common::config::*;
 use super::common::command::*;
 
@@ -33,7 +32,7 @@ pub struct Bar {
 
 impl Bar {
     pub fn get<T>(&self, offset: u32) -> T
-        where Pio<T>: ReadWrite<T>,
+        where Pio<T>: Io<T>,
               T: BitAnd<Output = T> + BitOr<Output = T> + PartialEq<T> + Not<Output = T> + Copy
     {
         assert!(offset < self.length);
@@ -48,7 +47,7 @@ impl Bar {
     }
 
     pub fn put<T>(&self, offset: u32, value: T)
-        where Pio<T>: ReadWrite<T>,
+        where Pio<T>: Io<T>,
               T: BitAnd<Output = T> + BitOr<Output = T> + PartialEq<T> + Not<Output = T> + Copy
     {
         assert!(offset < self.length);
